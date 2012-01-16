@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Simon Wimmesberger<www.fseek.org>
+ * Copyright (C) 2011 Thedeath<www.fseek.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ import javax.swing.WindowConstants;
 
 /**
  *
- * @author Simon Wimmesberger<www.fseek.org>
+ * @author Thedeath<www.fseek.org>
  */
 public class MainFrame extends javax.swing.JFrame
 {
