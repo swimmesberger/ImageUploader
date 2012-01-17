@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Thedeath<www.fseek.org>
+ * Copyright (C) 2012 Thedeath<www.fseek.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * MainFrame.java
- *
- * Created on 11.09.2011, 13:46:50
- */
 package imageuploader.guiClasses;
 
 import imageuploader.ImageScaler;
@@ -33,11 +27,7 @@ import java.awt.SystemTray;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 /**
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Thedeath<www.fseek.org>
+ * Copyright (C) 2012 Thedeath<www.fseek.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +16,11 @@
  */
 package imageuploader.guiClasses;
 
-import java.awt.HeadlessException;
-
-import java.awt.Image;
-
-import java.awt.MenuItem;
-
-import java.awt.Panel;
-
-import java.awt.PopupMenu;
-
-import java.awt.SystemTray;
-
-import java.awt.TrayIcon;
-
+import java.awt.*;
 import java.awt.event.ActionEvent;
-
 import java.awt.event.ActionListener;
-
 import java.awt.image.BufferedImage;
-
 import javax.swing.Icon;
-
-
 import javax.swing.plaf.metal.MetalIconFactory;
 
 public class SysTray

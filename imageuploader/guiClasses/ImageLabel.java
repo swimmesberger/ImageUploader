@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Thedeath<www.fseek.org>
+ * Copyright (C) 2012 Thedeath<www.fseek.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,7 @@ package imageuploader.guiClasses;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.Icon;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.KeyStroke;
-import javax.swing.TransferHandler;
+import javax.swing.*;
 
 public class ImageLabel extends JLabel
 {

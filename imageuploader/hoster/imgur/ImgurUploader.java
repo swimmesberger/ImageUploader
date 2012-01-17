@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Thedeath<www.fseek.org>
+ * Copyright (C) 2012 Thedeath<www.fseek.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package imageuploader.hoster.imgur;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import imageuploader.hoster.ImageUploader;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
