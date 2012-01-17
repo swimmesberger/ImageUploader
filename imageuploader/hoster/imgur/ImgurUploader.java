@@ -63,7 +63,7 @@ public class ImgurUploader implements ImageUploader
             try
             {
                 // Construct data
-                String data = URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode("5a8683c13e5ba0e388b89dafc652d1cd", "UTF-8");
+                String data = URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(new String(Base64.decode("NWE4NjgzYzEzZTViYTBlMzg4Yjg5ZGFmYzY1MmQxY2Q=")), "UTF-8");
                 data += "&" + URLEncoder.encode("image", "UTF-8") + "=" + URLEncoder.encode(Base64.encode(baos.toByteArray()), "UTF-8");
 
                 // Send data

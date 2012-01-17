@@ -125,9 +125,9 @@ public class MainFrame extends javax.swing.JFrame
     public void setNormal()
     {
         mainPanel.remove(imageLabel);
-        mainPanel.add(mainPanel, BorderLayout.CENTER);
+        mainPanel.add(imageField, BorderLayout.CENTER);
         this.repaint();
-        this.pack();
+        this.setSize(430, 194);
     }
     
     
