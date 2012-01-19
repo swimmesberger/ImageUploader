@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// experimental NOT WORKING AT THE MOMENT !!!
 package imageuploader.hoster.imagr;
 
 import imageuploader.hoster.HosterImage;
@@ -43,19 +42,18 @@ public class ImagrUploader implements ImageUploader
         HttpURLConnection conn = null;
         DataOutputStream dos;
         String lineEnd = "\r\n";
-        String boundary = "-----------------------------"+UniqueCreator.getUniqueId();
+        String boundary = "-----------------------------"+getUniqueId();
         String twoHyphens = "--";
         int serverResponseCode = 0;
         try 
-        { // open a URL connection to the Servlet
+        {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(imag, ext, baos);
             
             URL url = new URL(URL);
             conn = (HttpURLConnection) url.openConnection(); // Open a HTTP
             conn.setInstanceFollowRedirects(true);
-                                     // connection to
-                                     // the URL
+
             conn.setDoInput(true); // Allow Inputs
             conn.setDoOutput(true); // Allow Outputs
             conn.setUseCaches(false); // Don't use a Cached Copy
@@ -197,19 +195,11 @@ public class ImagrUploader implements ImageUploader
     {
         return uploadFile(imag, "png");
     }
-
-    /**
-     * Helper to create unique id.
-     */
-    private static final class UniqueCreator
+    
+    public static long getUniqueId()
     {
-
-
-        public static final long getUniqueId()
-        {
-            Random rand = new Random();
-            return rand.nextLong();
-        }
+        Random rand = new Random();
+        return rand.nextLong();
     }
 
 }
