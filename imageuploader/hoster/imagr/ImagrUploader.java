@@ -18,108 +18,151 @@
 // experimental NOT WORKING AT THE MOMENT !!!
 package imageuploader.hoster.imagr;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import imageuploader.hoster.HosterImage;
 import imageuploader.hoster.ImageUploader;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.cookie.BasicClientCookie2;
-import org.apache.http.message.BasicNameValuePair;
 
 public class ImagrUploader implements ImageUploader
 {
 
-    private static final String URL = "http://imagr.eu/img/";
-
-    public HosterImage uploadFile(BufferedImage imag, String ext)
+    private static final String URL = "http://imagr.eu/";
+    private int progress = 0;
+    private int insProgress = 100;
+    
+    public ImagrImage uploadFile(BufferedImage imag, String ext)
     {
-        try
-        {
-            // Creates Byte Array from picture
+        String fileName = generateRandomString() + "." + ext;
+        HttpURLConnection conn = null;
+        DataOutputStream dos;
+        String lineEnd = "\r\n";
+        String boundary = "-----------------------------"+UniqueCreator.getUniqueId();
+        String twoHyphens = "--";
+        int serverResponseCode = 0;
+        try 
+        { // open a URL connection to the Servlet
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(imag, ext, baos);
-            // Construct data
-            String pictureData = Base64.encode(baos.toByteArray());
-            String[] keys = new String[]
-            {
-                "boundary=---------------------------24464570528145"
-            };
-            String[] vals = new String[]
-            {
-                createUniqueId()
-            };
-            String sendRequest = sendRequest(keys, vals);
-            System.out.println(sendRequest);
-        } catch (IOException ex)
+            
+            URL url = new URL(URL);
+            conn = (HttpURLConnection) url.openConnection(); // Open a HTTP
+            conn.setInstanceFollowRedirects(true);
+                                     // connection to
+                                     // the URL
+            conn.setDoInput(true); // Allow Inputs
+            conn.setDoOutput(true); // Allow Outputs
+            conn.setUseCaches(false); // Don't use a Cached Copy
+            conn.setRequestMethod("POST");
+            
+            //write header
+            conn.setRequestProperty("Connection", "keep-alive");
+            conn.setRequestProperty("Content-Type","multipart/form-data;boundary=" + boundary);
+            progress += 25;
+            
+            dos = new DataOutputStream(conn.getOutputStream());
+            //write first boundary
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            
+            //write file
+            dos.writeBytes("Content-Disposition: form-data; name=\"source0n\"; filename=\"" + fileName + "\"" + lineEnd);
+            dos.writeBytes("Content-Type: image/png" + lineEnd);
+            dos.writeBytes(lineEnd);
+            byte[] toByteArray = baos.toByteArray();
+            dos.write(toByteArray);
+            
+           // send multipart form data necesssary after file data...
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+      
+            dos.writeBytes("Content-Disposition: form-data; name=\"source0n\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+
+            dos.writeBytes("Content-Disposition: form-data; name=\"type\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("up load");
+            dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+
+            dos.writeBytes("Content-Disposition: form-data; name=\"submit\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("Hochladen");
+            dos.writeBytes(lineEnd + twoHyphens + boundary + twoHyphens + lineEnd);
+            progress += 25;
+            // Responses from the server (code and message)
+            serverResponseCode = conn.getResponseCode();
+            String serverResponseMessage = conn.getResponseMessage();
+            System.out.println("Upload file to serverHTTP Response is : "+ serverResponseMessage + ": " + serverResponseCode);
+            // close streams
+            dos.flush();
+            dos.close();
+        } catch (MalformedURLException ex) 
         {
-            Logger.getLogger(ImagrUploader.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // this block will give the response of upload link
+        try 
+        {
+            progress += 25;
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            boolean directURL = false;
+            String directURLString = "";
+            String line;
+            while ((line = rd.readLine()) != null) 
+            {
+                if(directURL)
+                {
+                    String searchString = "<input onclick=\"this.select();\" name=\"urlDelete\" value=\"";
+                    String secSearchString = "\" />";
+                    int indexOf = line.indexOf(searchString);
+                    int secIndexOf = line.indexOf(secSearchString);
+                    if(indexOf != -1)
+                    {
+                        directURLString = line.substring(indexOf+searchString.length(),secIndexOf);
+                        break;
+                    }
+                }
+                if(line.contains("<div>URL</div>"))
+                {
+                    directURL = true;
+                }
+            }
+            rd.close();
+            progress += 25;
+            System.out.println("directURLString = " + directURLString);
+            return new ImagrImage(directURLString);
+        } catch (IOException ioex) 
+        {
+            ioex.printStackTrace();
         }
         return null;
-    }
 
-    private String sendRequest(String[] keys, String[] val) throws IllegalStateException, IOException
-    {
-        final DefaultHttpClient client = new DefaultHttpClient();
-        FileBody bin = new FileBody(new File("w1.png"), "image/png");
-        final HttpPost httpPost = new HttpPost(URL);
-        client.getCookieStore().addCookie(new BasicClientCookie2("PHPSESSID", "6e15blqstbnu720lrbr414s9b1"));
-        
-        StringBody comment = new StringBody("Filename: " + "w1.png");
-        MultipartEntity reqEntity = new MultipartEntity();
-        reqEntity.addPart("boundary", new StringBody("---------------------------24464570528145"));
-        reqEntity.addPart("source0n", bin);
-        reqEntity.addPart("filename", comment);
-        httpPost.setEntity(reqEntity);
-        
-        
-        //client.s("Cookie", "PHPSESSID==6e15blqstbnu720lrbr414s9b1");
-//        List<NameValuePair> postParams = addValue(keys, val);
-//        httpPost.setEntity(new UrlEncodedFormEntity(postParams));
-        HttpResponse response = client.execute(httpPost);
-        InputStream in = response.getEntity().getContent();
-        String s = inputStreamToString(in);
-        return s;
-    }
-
-    private List<NameValuePair> addValue(String[] key, String[] val)
-    {
-        final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
-        for (int i = 0; i < key.length; i++)
-        {
-            postParams.add(new BasicNameValuePair(key[i], val[i]));
         }
-        return postParams;
+
+    public static byte[] hexStringToByteArray(String s) 
+    {
+            int len = s.length();
+            byte[] data = new byte[len / 2];
+            for (int i = 0; i < len; i += 2) 
+            {
+                data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
+            }
+            return data;
     }
 
-    private String inputStreamToString(InputStream in) throws IOException
+    private String generateRandomString()
     {
-        String line = "";
-        StringBuilder total = new StringBuilder();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(in));
-        while ((line = rd.readLine()) != null)
-        {
-            total.append(line);
-            total.append(Character.LINE_SEPARATOR);
-        }
-        return total.toString();
-    }
-
-    public static void main(String[] args)
-    {
-        ImagrUploader upl = new ImagrUploader();
-        upl.uploadFile(new File("w1.png"));
+        Random r = new Random();
+        String token = Long.toString(Math.abs(r.nextLong()), 36);
+        return token;
     }
 
     @Override
@@ -146,7 +189,7 @@ public class ImagrUploader implements ImageUploader
     @Override
     public int getProgress()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return progress;
     }
 
     @Override
@@ -161,25 +204,12 @@ public class ImagrUploader implements ImageUploader
     private static final class UniqueCreator
     {
 
-        static int counter = 1;
 
-        public static final int getUniqueId()
+        public static final long getUniqueId()
         {
-            if (counter > 0)
-            {
-                return ++counter;
-            }
-            counter = 1;
-            return getUniqueId();
+            Random rand = new Random();
+            return rand.nextLong();
         }
     }
 
-    private static final String createUniqueId()
-    {
-        StringBuilder result = new StringBuilder();
-        result.append("---Part=").append(UniqueCreator.getUniqueId());
-        result.append('_').append(result.hashCode());
-        result.append('_').append(System.currentTimeMillis());
-        return result.toString();
-    }
 }

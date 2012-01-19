@@ -17,11 +17,15 @@
 
 package imageuploader.hoster;
 
+import imageuploader.hoster.imagr.ImagrUploader;
 import imageuploader.hoster.imgur.ImgurUploader;
 
 public class HosterFactory
 {
-    public static int IMGUR_UPLOADER = 1;
+    public static final int IMGUR_UPLOADER = 1;
+    public static final int IMAGR_UPLOADER = 2;
+    
+    public static String[] HOSTERS = new String[]{"imgur.com", "imagr.eu"};
     
     public static ImageUploader createUploader(int uploaderID)
     {
@@ -30,6 +34,9 @@ public class HosterFactory
         {
             case 1:
                 uploader = new ImgurUploader();
+                break;
+            case 2:
+                uploader = new ImagrUploader();
                 break;
             default:
                 throw new IllegalArgumentException("Hoster id not defined !");

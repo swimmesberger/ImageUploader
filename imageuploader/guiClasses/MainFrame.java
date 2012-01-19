@@ -24,6 +24,8 @@ import imageuploader.hoster.ImageUploader;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.SystemTray;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +38,7 @@ import javax.swing.*;
 public class MainFrame extends javax.swing.JFrame
 {
     //some options for the app, you can create a gui for that :)
-    public static final int IMAGE_HOSTER = HosterFactory.IMGUR_UPLOADER;
+    public static int IMAGE_HOSTER = HosterFactory.IMGUR_UPLOADER;
     public static final boolean TRAY_MODE = false;
 
     private ImageLabel imageLabel = new ImageLabel(this, null, JLabel.CENTER);
@@ -56,9 +58,28 @@ public class MainFrame extends javax.swing.JFrame
         }
         this.setLocationRelativeTo(null);
         initComponents();
+        intHoster();
         mainPanel.add(imageField, BorderLayout.CENTER);
         this.setSize(430, 194);
         uploader = HosterFactory.createUploader(IMAGE_HOSTER);
+    }
+    
+    private void intHoster()
+    {
+        hosterComboBox.removeAllItems();
+        for(String hoster : HosterFactory.HOSTERS)
+        {
+            hosterComboBox.addItem(hoster);
+        }
+        hosterComboBox.addItemListener(new ItemListener() 
+        {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+                IMAGE_HOSTER = hosterComboBox.getSelectedIndex()+1;
+                uploader = HosterFactory.createUploader(IMAGE_HOSTER);
+            }
+        });
     }
 
     public void uploadImage(BufferedImage img)
@@ -145,6 +166,8 @@ public class MainFrame extends javax.swing.JFrame
         statusPanel = new javax.swing.JPanel();
         infoLabel = new javax.swing.JLabel();
         uploadButton = new javax.swing.JButton();
+        hosterComboBox = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ImageUploader");
@@ -161,10 +184,7 @@ public class MainFrame extends javax.swing.JFrame
         });
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        statusPanel.setLayout(new java.awt.BorderLayout());
-
         infoLabel.setText("Paste image here ^");
-        statusPanel.add(infoLabel, java.awt.BorderLayout.WEST);
 
         uploadButton.setText("Upload");
         uploadButton.addActionListener(new java.awt.event.ActionListener() {
@@ -172,7 +192,33 @@ public class MainFrame extends javax.swing.JFrame
                 uploadButtonActionPerformed(evt);
             }
         });
-        statusPanel.add(uploadButton, java.awt.BorderLayout.EAST);
+
+        hosterComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("to");
+
+        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
+        statusPanel.setLayout(statusPanelLayout);
+        statusPanelLayout.setHorizontalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addComponent(infoLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                .addComponent(uploadButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hosterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        statusPanelLayout.setVerticalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(uploadButton)
+                .addComponent(hosterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1))
+        );
 
         mainPanel.add(statusPanel, java.awt.BorderLayout.SOUTH);
 
@@ -268,7 +314,9 @@ public class MainFrame extends javax.swing.JFrame
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox hosterComboBox;
     private javax.swing.JLabel infoLabel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JPanel statusPanel;
     private javax.swing.JButton uploadButton;
