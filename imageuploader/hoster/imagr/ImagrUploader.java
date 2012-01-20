@@ -86,4 +86,10 @@ public class ImagrUploader extends UploaderTemplate
         conn.setRequestProperty("Connection", "keep-alive");
         conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
     }
+
+    @Override
+    public String getSearchStringContains()
+    {
+        return "";
+    }
 }

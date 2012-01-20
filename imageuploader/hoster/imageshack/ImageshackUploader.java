@@ -15,19 +15,79 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package imageuploader.hoster.imagebanana;
+package imageuploader.hoster.imageshack;
 
 import imageuploader.hoster.UploaderTemplate;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
 
-public class ImagebananaUploader extends UploaderTemplate
+public class ImageshackUploader extends UploaderTemplate
 {
-    private static final String URL = "http://www.imagebanana.com/";
+    public static final String URL = "http://post.imageshack.us/";
 
+    @Override
+    public String pastParseURL(String directUrl)
+    {
+        return directUrl;
+    }
+
+    @Override
+    public void writeData(HttpURLConnection conn, DataOutputStream dos, ByteArrayOutputStream baos, String fileName, String boundary) throws IOException
+    {
+        //write file
+        dos.writeBytes("Content-Disposition: form-data; name=\"fileupload\"; filename=\"" + fileName + "\"" + lineEnd);
+        dos.writeBytes("Content-Type: image/png" + lineEnd);
+        dos.writeBytes(lineEnd);
+        byte[] toByteArray = baos.toByteArray();
+        dos.write(toByteArray);
+
+        // send multipart form data necesssary after file data...
+        dos.writeBytes(lineEnd);
+        dos.writeBytes(twoHyphens + boundary + lineEnd);
+
+        dos.writeBytes("Content-Disposition: form-data; name=\"rembar\"" + lineEnd);
+        dos.writeBytes(lineEnd);
+        dos.write(hexStringToByteArray("31"));
+        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+
+        dos.writeBytes("Content-Disposition: form-data; name=\"optsize\"" + lineEnd);
+        dos.writeBytes(lineEnd);
+        dos.writeBytes("resample");
+        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+
+        dos.writeBytes("Content-Disposition: form-data; name=\"optimage\"" + lineEnd);
+        dos.writeBytes(lineEnd);
+        dos.writeBytes("resample");
+        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+        
+        dos.writeBytes("Content-Disposition: form-data; name=\"brand\"" + lineEnd);
+        dos.writeBytes(lineEnd);
+    }
+
+    @Override
+    public void writeHeader(HttpURLConnection conn, String boundary)
+    {
+        //write header
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+    }
+    
+    public static void main(String[] args)
+    {
+        ImageshackUploader upl = new ImageshackUploader();
+        upl.uploadFile(new File("C:\\Users\\Simon\\Pictures\\w1.png"));
+    }
+
+    @Override
+    public String getSearchStringContains()
+    {
+        return "<input onClick=\"this.select(); pageTracker._trackEvent('new-done-click','shareable-click');\"";
+    }
+    
     @Override
     public String getURL()
     {
@@ -46,50 +106,4 @@ public class ImagebananaUploader extends UploaderTemplate
         return "[/IMG]";
     }
 
-    @Override
-    public String pastParseURL(String directUrl)
-    {
-        directUrl = directUrl.replace("/thumb/", "/");
-        return directUrl;
-    }
-
-    @Override
-    public void writeData(HttpURLConnection conn, DataOutputStream dos, ByteArrayOutputStream baos, String fileName, String boundary) throws IOException
-    {
-        //write file
-        dos.writeBytes("Content-Disposition: form-data; name=\"upload[]\"; filename=\"" + fileName + "\"" + lineEnd);
-        dos.writeBytes("Content-Type: image/png" + lineEnd);
-        dos.writeBytes(lineEnd);
-        byte[] toByteArray = baos.toByteArray();
-        dos.write(toByteArray);
-
-        // send multipart form data necesssary after file data...
-        dos.writeBytes(lineEnd);
-        dos.writeBytes(twoHyphens + boundary + lineEnd);
-
-        dos.writeBytes("Content-Disposition: form-data; name=\"options[resize]\"" + lineEnd);
-        dos.writeBytes(lineEnd);
-        dos.write(hexStringToByteArray("2d30"));
-        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
-
-        dos.writeBytes("Content-Disposition: form-data; name=\"options[resize_width]\"" + lineEnd);
-        dos.writeBytes(lineEnd);
-        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
-
-        dos.writeBytes("Content-Disposition: form-data; name=\"options[resize_height]\"" + lineEnd);
-        dos.writeBytes(lineEnd);
-    }
-
-    @Override
-    public void writeHeader(HttpURLConnection conn, String boundary)
-    {
-        conn.setRequestProperty("Connection", "keep-alive");
-        conn.setRequestProperty("Content-Type","multipart/form-data;boundary=" + boundary);
-    }
-
-    @Override
-    public String getSearchStringContains()
-    {
-        return "";
-    }
 }

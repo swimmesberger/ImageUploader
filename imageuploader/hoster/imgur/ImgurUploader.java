@@ -204,11 +204,12 @@ public class ImgurUploader extends UploaderTemplate
         //not needed because uploadFile is overwritten anyway
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    public static void main(String[] args)
+
+    @Override
+    public String getSearchStringContains()
     {
-        ImgurUploader upl = new ImgurUploader();
-        upl.uploadFile(new File("C:\\Users\\Simon\\Pictures\\w1.png"));
+        //not needed because uploadFile is overwritten anyway
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

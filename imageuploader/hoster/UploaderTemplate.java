@@ -39,7 +39,6 @@ public abstract class UploaderTemplate implements ImageUploader
         HttpURLConnection conn = null;
         DataOutputStream dos;
         String boundary = "-----------------------------"+getUniqueId();
-        int serverResponseCode;
         System.out.println("HOSTER: " + this.getClass().getSimpleName());
         try 
         {
@@ -67,10 +66,6 @@ public abstract class UploaderTemplate implements ImageUploader
             //write last boundary
             dos.writeBytes(lineEnd + twoHyphens + boundary + twoHyphens + lineEnd);
             progress += 25;
-            // Responses from the server (code and message)
-            serverResponseCode = conn.getResponseCode();
-            String serverResponseMessage = conn.getResponseMessage();
-            System.out.println("Upload file to serverHTTP Response is : "+ serverResponseMessage + ": " + serverResponseCode);
             // close streams
             dos.flush();
             dos.close();
@@ -106,7 +101,7 @@ public abstract class UploaderTemplate implements ImageUploader
                         break;
                     }
                 }
-                if (line.contains(""))
+                if (line.contains(getSearchStringContains()))
                 {
                     directURL = true;
                 }
@@ -186,5 +181,7 @@ public abstract class UploaderTemplate implements ImageUploader
     public abstract String pastParseURL(String directUrl);
     public abstract void writeData(HttpURLConnection conn, DataOutputStream dos, ByteArrayOutputStream baos, String fileName, String boundary)throws IOException;
     public abstract void writeHeader(HttpURLConnection conn, String boundary);
+    
+    public abstract String getSearchStringContains();
 
 }
