@@ -7,3 +7,5 @@ http://imgur.com/
 http://imagr.eu/
 
 http://www.imagebanana.com/
+
+http://www.imageshack.us/
