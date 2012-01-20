@@ -5,3 +5,5 @@ Implemented hoster:
 http://imgur.com/
 
 http://imagr.eu/
+
+http://www.imagebanana.com/
