@@ -18,10 +18,11 @@
 package imageuploader.hoster.imgur;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import imageuploader.hoster.ImageUploader;
+import imageuploader.hoster.UploaderTemplate;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -36,26 +37,24 @@ import org.dom4j.io.SAXReader;
  *
  * @author Thedeath<www.fseek.org>
  */
-public class ImgurUploader implements ImageUploader
+public class ImgurUploader extends UploaderTemplate
 {   
-    private int progress = 0;
-    private int insProgress = 100;
-
     public ImgurUploader()
     {
     }
 
-    
     @Override
     public ImgurImage uploadFile(BufferedImage imag)
     {
         return uploadFile(imag, "png");
     }
     
+    @Override
     public ImgurImage uploadFile(BufferedImage imag, String ext)
     {
         try
         {
+            System.out.println("HOSTER: " + this.getClass().getSimpleName());
             // Creates Byte Array from picture
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(imag, ext, baos);
@@ -83,6 +82,7 @@ public class ImgurUploader implements ImageUploader
                     ImgurImage imgInfo = new ImgurImage();
                     parseXML(rootElement, imgInfo);
                     progress = 100;
+                    System.out.println("directURLString = " + imgInfo.getImageURL());
                     return imgInfo;
                 } catch (IOException ex)
                 {
@@ -99,27 +99,6 @@ public class ImgurUploader implements ImageUploader
         {
             Logger.getLogger(ImgurUploader.class.getName()).log(Level.SEVERE, null, ex);
             progress = -1;
-        }
-        return null;
-    }
-    
-    @Override
-    public ImgurImage uploadFile(File f)
-    {
-        try
-        {
-            String name = f.getName();
-            String[] split = name.split("\\.");
-            String ext = "png";
-            if(split.length > 0)
-            {
-                ext = split[split.length-1];
-            }
-            BufferedImage imag = ImageIO.read(f);
-            return uploadFile(imag, ext);
-        } catch (IOException ex)
-        {
-            Logger.getLogger(ImgurUploader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -182,20 +161,54 @@ public class ImgurUploader implements ImageUploader
         }
     }
     
-    /**
-     * @return the progress
-     */
+
+
     @Override
-    public int getProgress()
+    public String getURL()
     {
-        return progress;
+        //not needed because uploadFile is overwritten anyway
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @return the insProgress
-     */
-    public int getInsProgress()
+    @Override
+    public String getFirstSearchString()
     {
-        return insProgress;
+        //not needed because uploadFile is overwritten anyway
+        throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public String getEndSearchString()
+    {
+        //not needed because uploadFile is overwritten anyway
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String pastParseURL(String directUrl)
+    {
+        //not needed because uploadFile is overwritten anyway
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void writeData(HttpURLConnection conn, DataOutputStream dos, ByteArrayOutputStream baos, String fileName, String boundary) throws IOException
+    {
+        //not needed because uploadFile is overwritten anyway
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void writeHeader(HttpURLConnection conn, String boundary)
+    {
+        //not needed because uploadFile is overwritten anyway
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public static void main(String[] args)
+    {
+        ImgurUploader upl = new ImgurUploader();
+        upl.uploadFile(new File("C:\\Users\\Simon\\Pictures\\w1.png"));
+    }
+
 }

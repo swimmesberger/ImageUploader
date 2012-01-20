@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package imageuploader.hoster.imagr;
+
+package imageuploader.hoster.imagebanana;
 
 import imageuploader.hoster.UploaderTemplate;
 import java.io.ByteArrayOutputStream;
@@ -22,10 +23,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-public class ImagrUploader extends UploaderTemplate
+
+public class ImagebananaUploader extends UploaderTemplate
 {
- 
-   private static final String URL = "http://imagr.eu/";
+    private static final String URL = "http://www.imagebanana.com/";
 
     @Override
     public String getURL()
@@ -36,18 +37,19 @@ public class ImagrUploader extends UploaderTemplate
     @Override
     public String getFirstSearchString()
     {
-        return "<input onclick=\"this.select();\" name=\"urlDelete\" value=\"";
+        return "[IMG]";
     }
 
     @Override
     public String getEndSearchString()
     {
-        return "\" />";
+        return "[/IMG]";
     }
 
     @Override
     public String pastParseURL(String directUrl)
     {
+        directUrl = directUrl.replace("/thumb/", "/");
         return directUrl;
     }
 
@@ -55,7 +57,7 @@ public class ImagrUploader extends UploaderTemplate
     public void writeData(HttpURLConnection conn, DataOutputStream dos, ByteArrayOutputStream baos, String fileName, String boundary) throws IOException
     {
         //write file
-        dos.writeBytes("Content-Disposition: form-data; name=\"source0n\"; filename=\"" + fileName + "\"" + lineEnd);
+        dos.writeBytes("Content-Disposition: form-data; name=\"upload[]\"; filename=\"" + fileName + "\"" + lineEnd);
         dos.writeBytes("Content-Type: image/png" + lineEnd);
         dos.writeBytes(lineEnd);
         byte[] toByteArray = baos.toByteArray();
@@ -65,25 +67,23 @@ public class ImagrUploader extends UploaderTemplate
         dos.writeBytes(lineEnd);
         dos.writeBytes(twoHyphens + boundary + lineEnd);
 
-        dos.writeBytes("Content-Disposition: form-data; name=\"source0n\"" + lineEnd);
+        dos.writeBytes("Content-Disposition: form-data; name=\"options[resize]\"" + lineEnd);
+        dos.writeBytes(lineEnd);
+        dos.write(hexStringToByteArray("2d30"));
+        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
+
+        dos.writeBytes("Content-Disposition: form-data; name=\"options[resize_width]\"" + lineEnd);
         dos.writeBytes(lineEnd);
         dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
 
-        dos.writeBytes("Content-Disposition: form-data; name=\"type\"" + lineEnd);
+        dos.writeBytes("Content-Disposition: form-data; name=\"options[resize_height]\"" + lineEnd);
         dos.writeBytes(lineEnd);
-        dos.writeBytes("up load");
-        dos.writeBytes(lineEnd + twoHyphens + boundary + lineEnd);
-
-        dos.writeBytes("Content-Disposition: form-data; name=\"submit\"" + lineEnd);
-        dos.writeBytes(lineEnd);
-        dos.writeBytes("Hochladen");
     }
 
     @Override
     public void writeHeader(HttpURLConnection conn, String boundary)
     {
-        //write header
         conn.setRequestProperty("Connection", "keep-alive");
-        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+        conn.setRequestProperty("Content-Type","multipart/form-data;boundary=" + boundary);
     }
 }

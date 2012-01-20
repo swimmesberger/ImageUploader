@@ -15,15 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package imageuploader.hoster.imagr;
-
-import imageuploader.hoster.HosterImage;
+package imageuploader.hoster;
 
 
-public class ImagrImage implements HosterImage
+public class SimpleHosterImage implements HosterImage
 {
     private String directImageUrl;
-    public ImagrImage(String directImageUrl)
+    public SimpleHosterImage(String directImageUrl)
     {
         this.directImageUrl = directImageUrl;
     }
