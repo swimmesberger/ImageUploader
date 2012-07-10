@@ -24,29 +24,29 @@ import imageuploader.hoster.imgur.ImgurUploader;
 
 public class HosterFactory
 {
-    public static final int IMGUR_UPLOADER = 1;
-    public static final int IMAGR_UPLOADER = 2;
-    public static final int IMAGEBANANA_UPLOADER = 3;
-    public static final int IMAGESHACK_UPLOADER = 4;
+    public static final int IMGUR_UPLOADER = 0;
+    public static final int IMAGR_UPLOADER = 1;
+    public static final int IMAGEBANANA_UPLOADER = 2;
+    public static final int IMAGESHACK_UPLOADER = 3;
     
-    public static String[] HOSTERS = new String[]{"imgur.com", "imagr.eu", "imagebanana.com", "imageshack.us"};
+    public static String[] HOSTERS = new String[]{"imgur.com", "imagr.eu", "imagebanana.com"};
     
     public static ImageUploader createUploader(int uploaderID)
     {
         ImageUploader uploader = null;
         switch(uploaderID)
         {
+            case 0:
+                uploader = new ImgurUploader(uploaderID);
+                break;
             case 1:
-                uploader = new ImgurUploader();
+                uploader = new ImagrUploader(uploaderID);
                 break;
             case 2:
-                uploader = new ImagrUploader();
+                uploader = new ImagebananaUploader(uploaderID);
                 break;
             case 3:
-                uploader = new ImagebananaUploader();
-                break;
-            case 4:
-                uploader = new ImageshackUploader();
+                uploader = new ImageshackUploader(uploaderID);
                 break;
             default:
                 throw new IllegalArgumentException("Hoster id not defined !");

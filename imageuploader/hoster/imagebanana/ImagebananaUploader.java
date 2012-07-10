@@ -28,6 +28,13 @@ public class ImagebananaUploader extends UploaderTemplate
 {
     private static final String URL = "http://www.imagebanana.com/";
 
+    public ImagebananaUploader(int id)
+    {
+        super(id);
+    }
+
+    
+    
     @Override
     public String getURL()
     {

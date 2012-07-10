@@ -29,6 +29,20 @@ import javax.imageio.ImageIO;
 public abstract class UploaderTemplate implements ImageUploader
 {
     public int progress = 0;
+    public int id;
+
+    public UploaderTemplate(int id)
+    {
+        this.id = id;
+    }
+
+    @Override
+    public int getID()
+    {
+        return id;
+    }
+    
+    
     
     public static final String lineEnd = "\r\n";
     public static final String twoHyphens = "--";

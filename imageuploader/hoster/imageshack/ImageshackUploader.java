@@ -20,15 +20,24 @@ package imageuploader.hoster.imageshack;
 import imageuploader.hoster.UploaderTemplate;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+/*
+ * @deprecated This class is outdated - needs an API key (http://stream.imageshack.us/api/)
+ */
 
 public class ImageshackUploader extends UploaderTemplate
 {
     public static final String URL = "http://post.imageshack.us/";
 
+    public ImageshackUploader(int id)
+    {
+        super(id);
+    }
+
+    
+    
     @Override
     public String pastParseURL(String directUrl)
     {
@@ -76,12 +85,6 @@ public class ImageshackUploader extends UploaderTemplate
         conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
     }
     
-    public static void main(String[] args)
-    {
-        ImageshackUploader upl = new ImageshackUploader();
-        upl.uploadFile(new File("C:\\Users\\Simon\\Pictures\\w1.png"));
-    }
-
     @Override
     public String getSearchStringContains()
     {

@@ -17,7 +17,7 @@
 
 package imageuploader.hoster.imgur;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import imageuploader.Base64;
 import imageuploader.hoster.UploaderTemplate;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -39,8 +39,9 @@ import org.dom4j.io.SAXReader;
  */
 public class ImgurUploader extends UploaderTemplate
 {   
-    public ImgurUploader()
+    public ImgurUploader(int id)
     {
+        super(id);
     }
 
     @Override

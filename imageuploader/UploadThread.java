@@ -82,16 +82,25 @@ public class UploadThread extends Thread
                             infoLabel.setText("Parse response...");
                             break;
                         case 100:
+                            while(imgInfo == null)
+                            {
+                                try
+                                {
+                                    if(this.isInterrupted())return;
+                                    Thread.sleep(100);
+                                } catch (InterruptedException ex)
+                                {
+                                    this.interrupt();
+                                    ex.printStackTrace();
+                                }
+                            }
                             infoLabel.setText("Finished ! ImageURL was copied in your Clipboard.");
-                            main.setNormal();
+                            main.setNormal(imgInfo.getImageURL());
                             setClipboard(imgInfo.getImageURL());
-//                            JDialog infoDia = new JDialog((JFrame) null, true);
-//                            infoDia.setLocationRelativeTo(null);
-//                            JTextField field = new JTextField();
-//                            infoDia.setContentPane(field);
-//                            field.setText(imgInfo.getOriginal());
-//                            infoDia.pack();
-//                            infoDia.setVisible(true);
+                            synchronized(this)
+                            {
+                                this.notify();
+                            }
                             return;
                     }
                 }
@@ -106,6 +115,10 @@ public class UploadThread extends Thread
         else
         {
             imgInfo = upl.uploadFile(buf);
+        }
+        if(imgInfo == null)
+        {
+            t.interrupt();
         }
     }
 

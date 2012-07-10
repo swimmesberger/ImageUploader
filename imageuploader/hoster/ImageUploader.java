@@ -24,4 +24,5 @@ public interface ImageUploader
     public HosterImage uploadFile(BufferedImage imag);
     public HosterImage uploadFile(File f);
     public int getProgress();
+    public int getID();
 }

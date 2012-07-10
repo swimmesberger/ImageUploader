@@ -16,17 +16,17 @@
  */
 package imageuploader.guiClasses;
 
+import imageuploader.HistoryEntry;
 import imageuploader.ImageScaler;
 import imageuploader.SingleInstanceUtil;
 import imageuploader.UploadThread;
 import imageuploader.hoster.HosterFactory;
 import imageuploader.hoster.ImageUploader;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.SystemTray;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -51,17 +51,24 @@ public class MainFrame extends javax.swing.JFrame
     /** Creates new form MainFrame */
     public MainFrame()
     {
-        if(TRAY_MODE && SingleInstanceUtil.checkRunning())
+        try
         {
-            JOptionPane.showMessageDialog(this, "The program is already running. Check your SystemTray :)");
-            System.exit(0);
+            if(TRAY_MODE && SingleInstanceUtil.checkRunning())
+            {
+                JOptionPane.showMessageDialog(this, "The program is already running. Check your SystemTray :)");
+                System.exit(0);
+            }
+            this.setLocationRelativeTo(null);
+            initComponents();
+            intHoster();
+            mainPanel.add(imageField, BorderLayout.CENTER);
+            this.setSize(430, 194);
+            uploader = HosterFactory.createUploader(IMAGE_HOSTER);
+        }catch(Exception ex)
+        {
+            ex.printStackTrace();
+            System.exit(1);
         }
-        this.setLocationRelativeTo(null);
-        initComponents();
-        intHoster();
-        mainPanel.add(imageField, BorderLayout.CENTER);
-        this.setSize(430, 194);
-        uploader = HosterFactory.createUploader(IMAGE_HOSTER);
     }
     
     private void intHoster()
@@ -76,7 +83,7 @@ public class MainFrame extends javax.swing.JFrame
             @Override
             public void itemStateChanged(ItemEvent e)
             {
-                IMAGE_HOSTER = hosterComboBox.getSelectedIndex()+1;
+                IMAGE_HOSTER = hosterComboBox.getSelectedIndex();
                 uploader = HosterFactory.createUploader(IMAGE_HOSTER);
             }
         });
@@ -87,6 +94,7 @@ public class MainFrame extends javax.swing.JFrame
         if (img == null)
         {
             JOptionPane.showMessageDialog(this, "Paste a image before !");
+            return;
         }
         UploadThread tr = new UploadThread(this, img, uploader);
         tr.start();
@@ -143,12 +151,13 @@ public class MainFrame extends javax.swing.JFrame
         return this.infoLabel;
     }
 
-    public void setNormal()
+    public void setNormal(String imageURL)
     {
         mainPanel.remove(imageLabel);
         mainPanel.add(imageField, BorderLayout.CENTER);
         this.repaint();
-        this.setSize(430, 194);
+        //this.setSize(430, 194);
+        historyWindow.getTableModel().addHistory(new HistoryEntry(imageURL, HosterFactory.HOSTERS[uploader.getID()], new Date()));
     }
     
     
@@ -174,6 +183,14 @@ public class MainFrame extends javax.swing.JFrame
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
+            }
+        });
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentMoved(java.awt.event.ComponentEvent evt) {
+                formComponentMoved(evt);
+            }
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
             }
         });
 
@@ -266,11 +283,41 @@ public class MainFrame extends javax.swing.JFrame
         }
     }//GEN-LAST:event_formWindowClosing
 
+    private void formComponentMoved(java.awt.event.ComponentEvent evt)//GEN-FIRST:event_formComponentMoved
+    {//GEN-HEADEREND:event_formComponentMoved
+        if(MainFrame.fixWindow)
+            setWindowRight(mainFrame, historyWindow);
+    }//GEN-LAST:event_formComponentMoved
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt)//GEN-FIRST:event_formComponentResized
+    {//GEN-HEADEREND:event_formComponentResized
+        if(MainFrame.fixWindow)
+            setWindowRight(mainFrame, historyWindow);
+    }//GEN-LAST:event_formComponentResized
+
+    public static void setWindowRight(Window first, Window second)
+    {
+        Point location = first.getLocation();
+        Dimension size = first.getSize();
+        second.setLocation(location.x + size.width, location.y);
+    }
+    
+    public static void setWindowLeft(Window first, Window second)
+    {
+        Point location = second.getLocation();
+        Dimension size = first.getSize();
+        first.setLocation(location.x - size.width, location.y);
+    }
+    
     public static String getJavaVersion()
     {
         String property = System.getProperty("java.version");
         return property;
     }
+    
+    private static MainFrame mainFrame;
+    private static HistoryWindow historyWindow;
+    public static boolean fixWindow = true;
     
     /**
      * @param args the command line arguments
@@ -309,7 +356,11 @@ public class MainFrame extends javax.swing.JFrame
             @Override
             public void run()
             {
-                new MainFrame().setVisible(true);
+                mainFrame = new MainFrame();
+                historyWindow = new HistoryWindow(mainFrame);
+                mainFrame.setVisible(true);
+                setWindowRight(mainFrame, historyWindow);
+                historyWindow.setVisible(true);
             }
         });
     }

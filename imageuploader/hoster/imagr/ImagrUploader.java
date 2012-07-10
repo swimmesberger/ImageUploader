@@ -27,6 +27,13 @@ public class ImagrUploader extends UploaderTemplate
  
    private static final String URL = "http://imagr.eu/";
 
+    public ImagrUploader(int id)
+    {
+        super(id);
+    }
+
+   
+   
     @Override
     public String getURL()
     {
