@@ -1,0 +1,3 @@
+[submodule "libs/FseekSwingX"]
+	path = libs/FseekSwingX
+	url = https://github.com/Thedeath/FseekSwingX.git
