@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package imageuploader.hoster;
+package org.fseek.simon.imageuploader.hoster;
 
 
 public class SimpleHosterImage implements HosterImage
 {
-    private String directImageUrl;
+    private final String directImageUrl;
     public SimpleHosterImage(String directImageUrl)
     {
         this.directImageUrl = directImageUrl;

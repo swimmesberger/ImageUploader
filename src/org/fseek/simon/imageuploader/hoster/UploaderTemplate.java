@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package imageuploader.hoster;
+package org.fseek.simon.imageuploader.hoster;
 
 import java.awt.image.BufferedImage;
 import java.io.*;

@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package imageuploader.hoster;
+package org.fseek.simon.imageuploader.hoster;
 
-import imageuploader.hoster.imagebanana.ImagebananaUploader;
-import imageuploader.hoster.imageshack.ImageshackUploader;
-import imageuploader.hoster.imagr.ImagrUploader;
-import imageuploader.hoster.imgur.ImgurUploader;
+import org.fseek.simon.imageuploader.hoster.imagebanana.ImagebananaUploader;
+import org.fseek.simon.imageuploader.hoster.imageshack.ImageshackUploader;
+import org.fseek.simon.imageuploader.hoster.imagr.ImagrUploader;
+import org.fseek.simon.imageuploader.hoster.imgur.ImgurUploader;
 
 public class HosterFactory
 {

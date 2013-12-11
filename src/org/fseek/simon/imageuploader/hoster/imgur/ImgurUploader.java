@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package imageuploader.hoster.imgur;
+package org.fseek.simon.imageuploader.hoster.imgur;
 
-import imageuploader.Base64;
-import imageuploader.hoster.UploaderTemplate;
+import org.fseek.simon.imageuploader.Base64;
+import org.fseek.simon.imageuploader.hoster.UploaderTemplate;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;

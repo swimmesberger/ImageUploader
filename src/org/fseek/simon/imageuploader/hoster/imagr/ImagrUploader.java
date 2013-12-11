@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package imageuploader.hoster.imagr;
+package org.fseek.simon.imageuploader.hoster.imagr;
 
-import imageuploader.hoster.UploaderTemplate;
+import org.fseek.simon.imageuploader.hoster.UploaderTemplate;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

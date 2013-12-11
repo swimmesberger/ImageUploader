@@ -14,15 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package imageuploader.hoster;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
+package org.fseek.simon.imageuploader.hoster;
 
-public interface ImageUploader
+public interface HosterImage
 {
-    public HosterImage uploadFile(BufferedImage imag);
-    public HosterImage uploadFile(File f);
-    public int getProgress();
-    public int getID();
+    public String getImageURL();
 }

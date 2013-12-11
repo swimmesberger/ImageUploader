@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package imageuploader;
+package org.fseek.simon.imageuploader;
 
-import imageuploader.guiClasses.MainFrame;
-import imageuploader.hoster.HosterImage;
-import imageuploader.hoster.ImageUploader;
+import org.fseek.simon.imageuploader.gui.MainFrame;
+import org.fseek.simon.imageuploader.hoster.HosterImage;
+import org.fseek.simon.imageuploader.hoster.ImageUploader;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;

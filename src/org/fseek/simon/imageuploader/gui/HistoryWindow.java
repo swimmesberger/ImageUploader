@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package imageuploader.guiClasses;
+package org.fseek.simon.imageuploader.gui;
 
-import imageuploader.HistoryEntry;
-import imageuploader.HistoryTableModel;
+import org.fseek.simon.imageuploader.HistoryEntry;
+import org.fseek.simon.imageuploader.HistoryTableModel;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.File;

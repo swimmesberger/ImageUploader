@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package imageuploader.guiClasses;
+package org.fseek.simon.imageuploader.gui;
 
-import imageuploader.HistoryEntry;
-import imageuploader.ImageScaler;
-import imageuploader.SingleInstanceUtil;
-import imageuploader.UploadThread;
-import imageuploader.hoster.HosterFactory;
-import imageuploader.hoster.ImageUploader;
+import org.fseek.simon.imageuploader.HistoryEntry;
+import org.fseek.simon.imageuploader.SingleInstanceUtil;
+import org.fseek.simon.imageuploader.UploadThread;
+import org.fseek.simon.imageuploader.hoster.HosterFactory;
+import org.fseek.simon.imageuploader.hoster.ImageUploader;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -41,9 +40,6 @@ public class MainFrame extends javax.swing.JFrame
     public static int IMAGE_HOSTER = HosterFactory.IMGUR_UPLOADER;
     public static final boolean TRAY_MODE = false;
 
-    private ImageLabel imageLabel = new ImageLabel(this, null, JLabel.CENTER);
-    private ImageField imageField = new ImageField(this);
-    private BufferedImage img;
     private ImageUploader uploader;
     
     private boolean firstTray = true;
@@ -61,10 +57,9 @@ public class MainFrame extends javax.swing.JFrame
             this.setLocationRelativeTo(null);
             initComponents();
             intHoster();
-            mainPanel.add(imageField, BorderLayout.CENTER);
             this.setSize(430, 194);
             uploader = HosterFactory.createUploader(IMAGE_HOSTER);
-        }catch(Exception ex)
+        }catch(HeadlessException ex)
         {
             ex.printStackTrace();
             System.exit(1);
@@ -98,52 +93,12 @@ public class MainFrame extends javax.swing.JFrame
         }
         UploadThread tr = new UploadThread(this, img, uploader);
         tr.start();
-        this.img = null;
+        this.imagePanel.setImage(null);
     }
 
     public void setImage(BufferedImage img)
     {
-        setImage(img, true);
-        this.repaint();
-    }
-
-    public void setImage(BufferedImage img, boolean pack)
-    {
-        if (img == null)
-        {
-            return;
-        }
-        this.img = img;
-        ImageScaler scal = new ImageScaler();
-        int newWidth = mainPanel.getWidth();
-        int newHeight = mainPanel.getHeight() - 10;
-        if(newWidth > this.img.getWidth())
-        {
-            newWidth = this.img.getWidth();
-        }
-        if(newHeight > this.img.getHeight())
-        {
-            newHeight = this.img.getHeight();
-        }
-        double scale = determineImageScale(img.getWidth(), img.getHeight(), newWidth, newHeight);
-        img = scal.scaleImage(img, new Dimension((int) (img.getWidth() * scale), (int) (img.getHeight() * scale)));
-        mainPanel.remove(imageField);
-        imageLabel.setText("");
-        imageLabel.setIcon(new ImageIcon(img));
-        mainPanel.add(imageLabel, BorderLayout.CENTER);
-        this.repaint();
-        if (pack)
-        {
-            this.pack();
-        }
-        imageLabel.requestFocus();
-    }
-
-    private double determineImageScale(int sourceWidth, int sourceHeight, int targetWidth, int targetHeight)
-    {
-        double scalex = (double) targetWidth / sourceWidth;
-        double scaley = (double) targetHeight / sourceHeight;
-        return Math.min(scalex, scaley);
+        this.imagePanel.setImage(img);
     }
 
     public JLabel getInfoLabel()
@@ -153,10 +108,6 @@ public class MainFrame extends javax.swing.JFrame
 
     public void setNormal(String imageURL)
     {
-        mainPanel.remove(imageLabel);
-        mainPanel.add(imageField, BorderLayout.CENTER);
-        this.repaint();
-        //this.setSize(430, 194);
         historyWindow.getTableModel().addHistory(new HistoryEntry(imageURL, HosterFactory.HOSTERS[uploader.getID()], new Date()));
     }
     
@@ -176,7 +127,8 @@ public class MainFrame extends javax.swing.JFrame
         infoLabel = new javax.swing.JLabel();
         uploadButton = new javax.swing.JButton();
         hosterComboBox = new javax.swing.JComboBox();
-        jLabel1 = new javax.swing.JLabel();
+        toLabel = new javax.swing.JLabel();
+        imagePanel = new org.fseek.simon.gui.image.ImagePanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ImageUploader");
@@ -194,14 +146,7 @@ public class MainFrame extends javax.swing.JFrame
             }
         });
 
-        mainPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                mainPanelComponentResized(evt);
-            }
-        });
         mainPanel.setLayout(new java.awt.BorderLayout());
-
-        infoLabel.setText("Paste image here ^");
 
         uploadButton.setText("Upload");
         uploadButton.addActionListener(new java.awt.event.ActionListener() {
@@ -212,19 +157,19 @@ public class MainFrame extends javax.swing.JFrame
 
         hosterComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("to");
+        toLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        toLabel.setText("to");
 
         javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(statusPanelLayout.createSequentialGroup()
-                .addComponent(infoLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
+                .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(uploadButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(toLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(hosterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -234,24 +179,20 @@ public class MainFrame extends javax.swing.JFrame
             .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(uploadButton)
                 .addComponent(hosterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jLabel1))
+                .addComponent(toLabel))
         );
 
         mainPanel.add(statusPanel, java.awt.BorderLayout.SOUTH);
+        mainPanel.add(imagePanel, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void mainPanelComponentResized(java.awt.event.ComponentEvent evt)//GEN-FIRST:event_mainPanelComponentResized
-    {//GEN-HEADEREND:event_mainPanelComponentResized
-        setImage(img, false);
-    }//GEN-LAST:event_mainPanelComponentResized
-
     private void uploadButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_uploadButtonActionPerformed
     {//GEN-HEADEREND:event_uploadButtonActionPerformed
-        uploadImage(img);
+        uploadImage(imagePanel.getImage());
     }//GEN-LAST:event_uploadButtonActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
@@ -366,10 +307,11 @@ public class MainFrame extends javax.swing.JFrame
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox hosterComboBox;
+    private org.fseek.simon.gui.image.ImagePanel imagePanel;
     private javax.swing.JLabel infoLabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JLabel toLabel;
     private javax.swing.JButton uploadButton;
     // End of variables declaration//GEN-END:variables
 }
